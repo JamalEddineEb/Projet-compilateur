@@ -57,7 +57,7 @@ if __name__ == '__main__':
 		with open(sys.argv[1],"r") as f:
 			data = f.read()
 			try:
-			    arbre = parser.parse(lexer.tokenize(data))
-			    arbre.afficher()
+				arbre = parser.parse(lexer.tokenize(data))
+				arbre.afficher()
 			except EOFError:
-			    exit()
+				exit()
