@@ -68,6 +68,28 @@ class FloParser(Parser):
 	def facteur(self, p):
 		return arbre_abstrait.Entier(p.ENTIER) #p.ENTIER = p[0]
 
+	@_('BOOLEAN')
+	def boolean(self, p):
+		return p[0]
+
+	@_('expr "==" expr')
+	def boolean(self, p):
+		return arbre_abstrait.Operation('==',p[0],p[2])
+
+	@_('boolean "AND" boolean')
+	def boolean(self, p):
+		return arbre_abstrait.Operation('AND', p[0], p[2])
+
+	@_('boolean "OR" boolean')
+	def boolean(self, p):
+		return arbre_abstrait.Operation('OR', p[0], p[2])
+
+	@_('"NOT" boolean')
+	def boolean(self, p):
+		return arbre_abstrait.Operation('NOT', p[1])
+
+	
+
 if __name__ == '__main__':
 	lexer = FloLexer()
 	parser = FloParser()
