@@ -46,9 +46,9 @@ class FloParser(Parser):
 	def expr(self, p):
 		return arbre_abstrait.Operation('-', p[3], p[1])
 
-	@_('"-" facteur')
+	@_('"-" expr')
 	def expr(self, p):
-		return arbre_abstrait.Operation('-', arbre_abstrait.Entier(0), p[1])
+		return arbre_abstrait.Operation('*', arbre_abstrait.Entier(-1), p[1])
 
 	@_('produit')
 	def expr(self,p):
