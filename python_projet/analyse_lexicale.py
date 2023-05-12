@@ -22,7 +22,6 @@ class FloLexer(Lexer):
 	ID = r'[a-zA-Z][a-zA-Z0-9_]*'
 	VARIABLE = r'[a-zA-Z][a-zA-Z0-9_]*'
 	ID['si'] = SI
-	ID['sinon'] = SINON
 	ID['tantque'] = TANTQUE
 	INFERIEUR_OU_EGAL= r'<='
 	SUPERIEUR_OU_EGAL= r'>='
@@ -31,6 +30,8 @@ class FloLexer(Lexer):
 	INFERIEUR = r'<'
 	SUPERIEUR = r'>'
 	TYPE = r'(entier|boolean)'
+	TYPE['entier'] = ENTIER
+	TYPE['boolean'] = BOOLEAN
 	OPERATEUR = r'(?:<|>|==|!=|<=|>=)'
 	
  
@@ -46,14 +47,14 @@ class FloLexer(Lexer):
 
 
 
-    # Token pour la déclaration de variable
+	# Token pour la déclaration de variable
 	@_(TYPE + r'\s+' + ID + r';')
 	def DECLARATION(self, t):
 		t.value = (t.value.split()[0], t.value.split()[1])
 		return t
 
     # Token pour l'affectation de variable
-	@_(ID + r'\s*=\s*.+;')
+	@_(ID + r'\s+' + ENTIER + r';')
 	def AFFECTATION(self, t):
 		t.value = (t.value.split()[0], " ".join(t.value.split()[2:-1]))
 		return t
