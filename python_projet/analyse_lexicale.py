@@ -8,11 +8,12 @@ class FloLexer(Lexer):
 	# Noms des lexèmes (sauf les litéraux). En majuscule. Ordre non important
 	tokens = { ID, ENTIER, ECRIRE, INFERIEUR_OU_EGAL, EGALITE, DIFFERENT,CONDITION,OPERATEUR,
            INFERIEUR, SUPERIEUR, SUPERIEUR_OU_EGAL, ET, OU, NON, BOOLEAN, TYPE, DECLARATION_AFFECTATION
-		, INSTRUCTION,INSTRUCTIONS,OPERATEUR_LOGIQUE,SI,SINON,TANTQUE,VARIABLE}
+		, INSTRUCTION,INSTRUCTIONS,OPERATEUR_LOGIQUE,SI,SINON,TANTQUE,LIRE}
 
 	#Les caractères litéraux sont des caractères uniques qui sont retournés tel quel quand rencontré par l'analyse lexicale.
 	#Les litéraux sont vérifiés en dernier, après toutes les autres règles définies par des expressions régulières.
 	#Donc, si une règle commence par un de ces littérals (comme INFERIEUR_OU_EGAL), cette règle aura la priorité.
+
 	literals = { '+','*','(',')',";", "-","/","%" ,",","{","}","="}
 	
 	# chaines contenant les caractère à ignorer. Ici espace et tabulation
@@ -20,9 +21,14 @@ class FloLexer(Lexer):
 
 	# Expressions régulières correspondant au différents Lexèmes par ordre de priorité
 	ID = r'[a-zA-Z][a-zA-Z0-9_]*'
-	VARIABLE = r'[a-zA-Z][a-zA-Z0-9_]*'
 	ID['si'] = SI
 	ID['tantque'] = TANTQUE
+	ID['Vrai'] = BOOLEAN
+	ID['Faux'] = BOOLEAN
+	ID['et'] = ET
+	ID['ou'] = OU
+	ID['!'] = NON
+
 	INFERIEUR_OU_EGAL= r'<='
 	SUPERIEUR_OU_EGAL= r'>='
 	EGALITE= r'=='
@@ -37,11 +43,7 @@ class FloLexer(Lexer):
  
 
 	#Opérateurs logiques
-	ET = 'ET'
-	OU = 'OU'
-	NON = 'NOT'
- 
-	OPERATEUR_LOGIQUE = r'(?:ET|OU|NOT)'
+
 
 	# Expressions régulières pour les types et les identifiants
 
@@ -54,7 +56,7 @@ class FloLexer(Lexer):
 		return t
 
     # Token pour l'affectation de variable
-	@_(ID + r'\s+' + ENTIER + r';')
+	@_(ID + r'=' + ENTIER + r';')
 	def AFFECTATION(self, t):
 		t.value = (t.value.split()[0], " ".join(t.value.split()[2:-1]))
 		return t
@@ -82,13 +84,6 @@ class FloLexer(Lexer):
 		return t
 
 
-	@_(r'Vrai|Faux')
-	def BOOLEAN(self,t):
-		if t.value=='Vrai':
-			t.value = TRUE
-		else:
-			t.value = FALSE
-		return t
 	
 	INSTRUCTIONS = r'instruction(\s*;\s*instruction)*\s*;?'
 	# The above regular expression matches one or more instructions separated by semicolons, with optional whitespace before and after
@@ -101,12 +96,12 @@ class FloLexer(Lexer):
 		t.value = instruction_list
 		return t
 
-	@_(r'entier\s+' + str(VARIABLE) + r'\s*=\s*' + str(ENTIER))
+	@_(r'entier\s+' + str(ID) + r'\s*=\s*' + str(ENTIER))
 	def DECLARATION_AFFECTATION(self, t):
 		name, value = t.value.split('=')
 		self.variables[name.strip()] = int(value.strip())
 
-	@_(r'boolean\s+' + str(VARIABLE) + r'\s*=\s*' + str(BOOLEAN))
+	@_(r'boolean\s+' + str(ID) + r'\s*=\s*' + str(BOOLEAN))
 	def DECLARATION_AFFECTATION(self, t):
 		name, value = t.value.split('=')
 		self.variables[name.strip()] = (value.strip() == TRUE)
@@ -133,6 +128,7 @@ class FloLexer(Lexer):
 
 	# cas spéciaux:
 	ID['ecrire'] = ECRIRE
+	ID['lire'] = LIRE
 	
 	#Syntaxe des commentaires à ignorer
 	ignore_comment = r'\#.*'

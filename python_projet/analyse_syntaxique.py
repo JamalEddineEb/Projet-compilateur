@@ -18,20 +18,20 @@ class FloParser(Parser):
 		l = arbre_abstrait.ListeInstructions()
 		l.instructions.append(p[0])
 		return l
-					
+
 	@_('instruction listeInstructions')
 	def listeInstructions(self, p):
 		p[1].instructions.append(p[0])
 		return p[1]
-		
+
 	@_('ecrire')
 	def instruction(self, p):
 		return p[0]
-			
+
 	@_('ECRIRE "(" expr ")" ";"')
 	def ecrire(self, p):
 		return arbre_abstrait.Ecrire(p.expr) #p.expr = p[2]
-		
+
 	@_('expr "+" produit')
 	def expr(self, p):
 		return arbre_abstrait.Operation('+',p[0],p[2])
@@ -47,7 +47,7 @@ class FloParser(Parser):
 		return arbre_abstrait.Operation('-', p[3], p[1])
 
 	@_('"-" facteur')
-	def expr(self, p):
+	def produit(self, p):
 		return arbre_abstrait.Operation('*', arbre_abstrait.Entier(-1), p[1])
 
 	@_('produit')
@@ -73,32 +73,64 @@ class FloParser(Parser):
 	@_('"(" expr ")"')
 	def facteur(self, p):
 		return p.expr #ou p[1]
-		
+
 	@_('ENTIER')
 	def facteur(self, p):
-		return arbre_abstrait.Entier(p.ENTIER) #p.ENTIER = p[0]
+		return arbre_abstrait.Entier(p.ENTIER)
+
+	@_('ID')
+	def facteur(self, p):
+		return arbre_abstrait.Variable(p.ID)
+
+	@_('LIRE "(" ")"')
+	def facteur(self, p):
+		return arbre_abstrait.lire()
+
+	@_('ID "(" exprList ")"')
+	def facteur(self, p):
+		return arbre_abstrait.AppelFonction(p.ID, p.exprList)
+
+	@_('expr')
+	def exprList(self, p):
+		return arbre_abstrait.ExprList(p.expr)
+
+	@_('expr "," exprList')
+	def exprList(self, p):
+		return arbre_abstrait.ExprList(p.expr,p.exprList)
+
+	@_('ID "(" ")"')
+	def facteur(self, p):
+		return arbre_abstrait.AppelFonction(p.ID, [])
+
+	@_('ID "(" exprList ")"')
+	def boolean(self, p):
+		return arbre_abstrait.AppelFonction(p.ID, p.exprList)
+
+	@_('boolean')
+	def expr(self, p):
+		return p[0]
 
 	@_('BOOLEAN')
 	def boolean(self, p):
-		return p[0]
+		return arbre_abstrait.Boolean(p.BOOLEAN)
 
-	@_('expr "==" expr')
+	@_('expr EGALITE expr')
 	def boolean(self, p):
 		return arbre_abstrait.Operation('==',p[0],p[2])
 
-	@_('boolean "AND" boolean')
+	@_('boolean ET boolean')
 	def boolean(self, p):
-		return arbre_abstrait.Operation('AND', p[0], p[2])
+		return arbre_abstrait.Operation('ET', p[0], p[2])
 
-	@_('boolean "OR" boolean')
+	@_('boolean OU boolean')
 	def boolean(self, p):
 		return arbre_abstrait.Operation('OR', p[0], p[2])
 
-	@_('"NOT" boolean')
+	@_('NON boolean')
 	def boolean(self, p):
 		return arbre_abstrait.Operation('NOT', p[1])
 
-	
+
 
 if __name__ == '__main__':
 	lexer = FloLexer()
