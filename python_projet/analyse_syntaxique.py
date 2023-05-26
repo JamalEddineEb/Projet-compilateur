@@ -28,6 +28,92 @@ class FloParser(Parser):
 	def instruction(self, p):
 		return p[0]
 
+	@_('appel_fonction')
+	def instruction(self, p):
+		return p[0]
+
+	@_('declaration')
+	def instruction(self, p):
+		return p[0]
+
+	@_('affectation')
+	def instruction(self,p):
+		return p[0]
+
+	@_('declaration_affectation')
+	def instruction(self,p):
+		return p[0]
+
+	@_('tant_que')
+	def instruction(self,p):
+		return p[0]
+
+	@_('retourner')
+	def instruction(self, p):
+		return p[0]
+
+	@_('ID "(" exprList ")" ";"')
+	def appel_fonction(self, p):
+		return arbre_abstrait.AppelFonction(p[0], p[2])
+	@_('si')
+	def instruction(self,p):
+		return p[0]
+
+	@_('SI "(" expr ")" "{" listeInstructions "}" sinon')
+	def si(self, p):
+		return arbre_abstrait.Si(p.expr, p.listeInstructions,p.sinon)
+
+	@_('')
+	def sinon(self,p):
+		return None
+
+	@_('SINON_SI "(" expr ")" "{" listeInstructions "}" sinon')
+	def sinon(self,p):
+		return arbre_abstrait.SinonSi(p.expr,p.listeInstructions,p.sinon)
+
+	@_('SINON "{" listeInstructions "}"')
+	def sinon(self,p):
+		return arbre_abstrait.Sinon(p.listeInstructions)
+
+	@_('TANTQUE "(" expr ")" "{" listeInstructions "}"')
+	def tant_que(self, p):
+		return arbre_abstrait.InstructionBoucle(p.expr, p.listeInstructions)
+
+	@_('SINON_SI "(" expr ")" "{" listeInstructions "}"')
+	def sinon_si(self, p):
+		return arbre_abstrait.SinonSi(p[2], p[4])
+
+
+	@_('RETOURNER expr ";"')
+	def retourner(self,p):
+		return arbre_abstrait.InstructionRetour(p[1])
+
+	@_('type variable "=" expr ";"')
+	def declaration_affectation(self, p):
+		return arbre_abstrait.DeclarationAffectation(p[0], p[1], p[3])
+
+	@_('variable "=" expr ";"')
+	def affectation(self, p):
+		return arbre_abstrait.Affectation(p[0], p[2])
+
+	@_('type id ";"')
+	def declaration(self, p):
+		return arbre_abstrait.Declaration(p[0], p[1])
+
+	@_('TYPE')
+	def type(self,p):
+		return arbre_abstrait.Type(p[0])
+
+	@_('variable')
+	def id(self,p):
+		return p[0]
+
+	@_('ID')
+	def variable(self,p):
+		return arbre_abstrait.Variable(p[0])
+
+
+
 	@_('ECRIRE "(" expr ")" ";"')
 	def ecrire(self, p):
 		return arbre_abstrait.Ecrire(p.expr) #p.expr = p[2]
@@ -35,7 +121,6 @@ class FloParser(Parser):
 	@_('expr "+" produit')
 	def expr(self, p):
 		return arbre_abstrait.Operation('+',p[0],p[2])
-
 
 
 	@_('expr "-" produit')
@@ -114,9 +199,9 @@ class FloParser(Parser):
 	def boolean(self, p):
 		return arbre_abstrait.Boolean(p.BOOLEAN)
 
-	@_('expr EGALITE expr')
+	@_('expr OPERATEUR expr')
 	def boolean(self, p):
-		return arbre_abstrait.Operation('==',p[0],p[2])
+		return arbre_abstrait.BooleanOperation(p[1],p[0],p[2])
 
 	@_('boolean ET boolean')
 	def boolean(self, p):
@@ -129,6 +214,28 @@ class FloParser(Parser):
 	@_('NON boolean')
 	def boolean(self, p):
 		return arbre_abstrait.Operation('NOT', p[1])
+
+
+	"""
+
+	
+
+	@_('SI "(" expr ")" "{" listeInstructions "}" SINON SI "{" listeInstructions "}" SINON "{" listeInstructions "}"')
+	def instruction(self, p):
+		return arbre_abstrait.InstructionConditionnelle(p.expr, p.listeInstructions1, p.listeInstructions2, p.listeInstructions3)
+
+
+
+	
+
+	@_('ID "(" exprList ")" ";"')
+	def instruction(self, p):
+		return arbre_abstrait.AppelFonction(p.ID, p.exprList)
+
+	@_('ID "(" ")" ";"')
+	def instruction(self, p):
+		return arbre_abstrait.AppelFonction(p.ID, None)"""
+
 
 
 

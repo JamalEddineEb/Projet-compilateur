@@ -7,8 +7,8 @@ class FloLexer(Lexer):
 
 	# Noms des lexèmes (sauf les litéraux). En majuscule. Ordre non important
 	tokens = { ID, ENTIER, ECRIRE, INFERIEUR_OU_EGAL, EGALITE, DIFFERENT,CONDITION,OPERATEUR,
-           INFERIEUR, SUPERIEUR, SUPERIEUR_OU_EGAL, ET, OU, NON, BOOLEAN, TYPE, DECLARATION_AFFECTATION
-		, INSTRUCTION,INSTRUCTIONS,OPERATEUR_LOGIQUE,SI,SINON,TANTQUE,LIRE}
+           INFERIEUR, SUPERIEUR, SUPERIEUR_OU_EGAL, ET, OU, NON, BOOLEAN, TYPE
+		, INSTRUCTION,INSTRUCTIONS,OPERATEUR_LOGIQUE,SI,SINON,TANTQUE,LIRE,T_ENTIER,RETOURNER,AFFECTATION,SINON_SI}
 
 	#Les caractères litéraux sont des caractères uniques qui sont retournés tel quel quand rencontré par l'analyse lexicale.
 	#Les litéraux sont vérifiés en dernier, après toutes les autres règles définies par des expressions régulières.
@@ -22,6 +22,9 @@ class FloLexer(Lexer):
 	# Expressions régulières correspondant au différents Lexèmes par ordre de priorité
 	ID = r'[a-zA-Z][a-zA-Z0-9_]*'
 	ID['si'] = SI
+	ID['sinon'] = SINON
+	ID['sinon si'] = SINON_SI
+	ID['retourner'] = RETOURNER
 	ID['tantque'] = TANTQUE
 	ID['Vrai'] = BOOLEAN
 	ID['Faux'] = BOOLEAN
@@ -29,20 +32,17 @@ class FloLexer(Lexer):
 	ID['ou'] = OU
 	ID['!'] = NON
 
-	INFERIEUR_OU_EGAL= r'<='
-	SUPERIEUR_OU_EGAL= r'>='
-	EGALITE= r'=='
-	DIFFERENT = r'!='
-	INFERIEUR = r'<'
-	SUPERIEUR = r'>'
-	TYPE = r'(entier|boolean)'
-	TYPE['entier'] = ENTIER
-	TYPE['boolean'] = BOOLEAN
-	OPERATEUR = r'(?:<|>|==|!=|<=|>=)'
-	
- 
+	ID['entier'] = TYPE
+	ID['boolean'] = TYPE
 
-	#Opérateurs logiques
+	ID["="] = AFFECTATION
+
+	OPERATEUR = r'(?:<|>|==|!=|<=|>=)'
+
+
+
+
+#Opérateurs logiques
 
 
 	# Expressions régulières pour les types et les identifiants

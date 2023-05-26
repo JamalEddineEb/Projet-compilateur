@@ -1,1 +1,18 @@
+entier a;
 ecrire(42);
+a =3;
+boolean b = 4;
+tantque(a>3){
+    ecrire(42);
+    ecrire(a);
+    retourner 12;
+}
+no(4,2,3);
+
+si(b){
+    ecrire(42);
+}
+sinon{
+    f(3);
+}
+
