@@ -67,7 +67,7 @@ class FloParser(Parser):
 	def sinon(self,p):
 		return None
 
-	@_('SINON_SI "(" expr ")" "{" listeInstructions "}" sinon')
+	@_('SINON SI "(" expr ")" "{" listeInstructions "}" sinon')
 	def sinon(self,p):
 		return arbre_abstrait.SinonSi(p.expr,p.listeInstructions,p.sinon)
 

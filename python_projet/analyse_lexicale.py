@@ -23,7 +23,6 @@ class FloLexer(Lexer):
 	ID = r'[a-zA-Z][a-zA-Z0-9_]*'
 	ID['si'] = SI
 	ID['sinon'] = SINON
-	ID['sinon si'] = SINON_SI
 	ID['retourner'] = RETOURNER
 	ID['tantque'] = TANTQUE
 	ID['Vrai'] = BOOLEAN
