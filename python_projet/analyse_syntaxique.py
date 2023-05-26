@@ -79,11 +79,6 @@ class FloParser(Parser):
 	def tant_que(self, p):
 		return arbre_abstrait.InstructionBoucle(p.expr, p.listeInstructions)
 
-	@_('SINON_SI "(" expr ")" "{" listeInstructions "}"')
-	def sinon_si(self, p):
-		return arbre_abstrait.SinonSi(p[2], p[4])
-
-
 	@_('RETOURNER expr ";"')
 	def retourner(self,p):
 		return arbre_abstrait.InstructionRetour(p[1])
