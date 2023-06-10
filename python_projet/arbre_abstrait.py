@@ -23,6 +23,7 @@ class Programme:
 
 def afficher(self, indent=0):
         afficher("<programme>", indent)
+        self.listeFonctions.afficher(indent+1)
         self.listeInstructions.afficher(indent + 1)
         afficher("</programme>", indent)
 
