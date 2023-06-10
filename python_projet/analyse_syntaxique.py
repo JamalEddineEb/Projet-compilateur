@@ -32,13 +32,24 @@ class FloParser(Parser):
 	def fonction(self, p):
 		return arbre_abstrait.Fonction(p.TYPE, p.ID, p.listeParametres, p.listeInstructions)
 
-	@_("listeParametres")
+	@_("listeParametres ',' parametre")
 	def listeParametres(self, p):
+		p.listeParametres.append(p.parametre)
 		return p.listeParametres
+
+	@_("parametre")
+	def listeParametres(self, p):
+		return [p.parametre]
+
+	@_("TYPE ID")
+	def parametre(self,p):
+		return arbre_abstrait.Parametre(p[0],p[1])
 
 	@_("")
 	def listeParametres(self, p):
 		return None
+
+
 
 
 	@_('instruction')

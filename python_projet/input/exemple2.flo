@@ -1,4 +1,7 @@
-entier neyy(){
+entier neyy(entier c,boolean b){
     ecrire(42);
+}
+entier myy(){
+    ecrire(4);
 }
 ecrire(42);

@@ -42,19 +42,32 @@ class Fonction:
     def __init__(self, type_retour, identificateur, liste_parametres=None, liste_instructions=None):
         self.type_retour = type_retour
         self.identificateur = identificateur
-        self.liste_parametres = liste_parametres or []
-        self.liste_instructions = liste_instructions or []
+        self.liste_parametres = liste_parametres
+        self.liste_instructions = liste_instructions
 
     def afficher(self, indent=0):
         afficher("<fonction>", indent)
         afficher("[Type retour: "+self.type_retour+"]", indent + 1)
         afficher("[Identificateur: "+self.identificateur+"]", indent + 1)
-        afficher("<liste_parametres>", indent + 1)
-        for parametre in self.liste_parametres:
-            parametre.afficher(indent + 2)
-        afficher("</liste_parametres>", indent + 1)
+        if(self.liste_parametres):
+            afficher("<liste_parametres>", indent+1)
+            for p in self.liste_parametres:
+                p.afficher(indent+2)
+            afficher("</liste_parametres>", indent + 1)
         self.liste_instructions.afficher(indent+1)
         afficher("</fonction>", indent)
+
+class Parametre:
+    def __init__(self, type_, id_):
+        self.type_ = type_
+        self.id_ = id_
+
+    def afficher(self, indent=0):
+        afficher("<parametre>", indent)
+        afficher("[Type : "+self.type_+"]",indent+1)
+        afficher("[Nom : "+self.id_+"]",indent+1)
+        afficher("</parametre>", indent)
+
 
 
 
