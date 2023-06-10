@@ -1,6 +1,4 @@
-si(1>0){
-    ecrire(17);
+entier neyy(){
+    ecrire(42);
 }
-sinon{
-    ecrire(6);
-}
+ecrire(42);

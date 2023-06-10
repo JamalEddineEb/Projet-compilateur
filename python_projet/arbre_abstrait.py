@@ -21,22 +21,12 @@ class Programme:
         self.listeInstructions = listeInstructions
         self.listeFonctions = listeFonctions
 
-def afficher(self, indent=0):
+    def afficher(self, indent=0):
         afficher("<programme>", indent)
-        self.listeFonctions.afficher(indent+1)
+        if(self.listeFonctions):
+            self.listeFonctions.afficher(indent+1)
         self.listeInstructions.afficher(indent + 1)
         afficher("</programme>", indent)
-
-
-class ListeInstructions:
-    def __init__(self):
-        self.instructions = []
-
-    def afficher(self, indent=0):
-        afficher("<listeInstructions>", indent)
-        for instruction in reversed(self.instructions):
-            instruction.afficher(indent + 1)
-        afficher("</listeInstructions>", indent)
 
 class ListeFonctions:
     def __init__(self):
@@ -48,6 +38,35 @@ class ListeFonctions:
             fonction.afficher(indent + 1)
         afficher("</listeFonctions>", indent)
 
+class Fonction:
+    def __init__(self, type_retour, identificateur, liste_parametres=None, liste_instructions=None):
+        self.type_retour = type_retour
+        self.identificateur = identificateur
+        self.liste_parametres = liste_parametres or []
+        self.liste_instructions = liste_instructions or []
+
+    def afficher(self, indent=0):
+        afficher("<fonction>", indent)
+        afficher("[Type retour: "+self.type_retour+"]", indent + 1)
+        afficher("[Identificateur: "+self.identificateur+"]", indent + 1)
+        afficher("<liste_parametres>", indent + 1)
+        for parametre in self.liste_parametres:
+            parametre.afficher(indent + 2)
+        afficher("</liste_parametres>", indent + 1)
+        self.liste_instructions.afficher(indent+1)
+        afficher("</fonction>", indent)
+
+
+
+class ListeInstructions:
+    def __init__(self):
+        self.instructions = []
+
+    def afficher(self, indent=0):
+        afficher("<listeInstructions>", indent)
+        for instruction in reversed(self.instructions):
+            instruction.afficher(indent + 1)
+        afficher("</listeInstructions>", indent)
 
 class Affectation:
     def __init__(self, variable, expression):
@@ -213,6 +232,19 @@ class BooleanOperation:
             self.exp2.afficher(indent + 1)
         afficher("</BooleanOperation: \"" + self.op + "\">", indent)
 
+class ComparisonOperation:
+    def __init__(self, operator, operand1, operand2=None):
+        self.op = operator
+        self.exp1 = operand1
+        self.exp2 = operand2
+
+    def afficher(self, indent=0):
+        afficher("<ComparisonOperation: \"" + self.op + "\">", indent)
+        self.exp1.afficher(indent + 1)
+        if(self.exp2):
+            self.exp2.afficher(indent + 1)
+        afficher("</ComparisonOperation: \"" + self.op + "\">", indent)
+
 
 class InstructionBoucle:
     def __init__(self, condition, instructions):
@@ -263,5 +295,4 @@ class Sinon:
         afficher("<sinon>", indent)
         self.instructions.afficher(indent + 1)
         afficher("</sinon>", indent)
-
 

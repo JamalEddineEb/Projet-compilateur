@@ -15,7 +15,31 @@ class FloParser(Parser):
 
 	@_('listeFonctions listeInstructions')
 	def prog(self, p):
-		return arbre_abstrait.Programme(p[0],p[1])
+		return arbre_abstrait.Programme(p[1],p[0])
+
+	@_("fonction")
+	def listeFonctions(self, p):
+		f = arbre_abstrait.ListeFonctions()
+		f.fonctions.append(p.fonction)
+		return f
+
+	@_("fonction listeFonctions")
+	def listeFonctions(self, p):
+		p.listeFonctions.fonctions.append(p.fonction)
+		return p.listeFonctions
+
+	@_("TYPE ID '(' listeParametres ')' '{' listeInstructions '}'")
+	def fonction(self, p):
+		return arbre_abstrait.Fonction(p.TYPE, p.ID, p.listeParametres, p.listeInstructions)
+
+	@_("listeParametres")
+	def listeParametres(self, p):
+		return p.listeParametres
+
+	@_("")
+	def listeParametres(self, p):
+		return None
+
 
 	@_('instruction')
 	def listeInstructions(self, p):
@@ -31,18 +55,6 @@ class FloParser(Parser):
 	@_('ecrire')
 	def instruction(self, p):
 		return p[0]
-
-	@_("fonction")
-	def listeFonctions(self, p):
-		f = arbre_abstrait.ListeFonctions()
-		f.fonctions.append(p.fonction)
-		return f
-
-	@_("fonction listeFonctions")
-	def listeFonctions(self, p):
-		p.listeFonctions.fonctions.append(p.fonction)
-		return p.listeFonctions
-
 
 	@_('appel_fonction')
 	def instruction(self, p):
@@ -212,7 +224,7 @@ class FloParser(Parser):
 
 	@_('expr OPERATEUR expr')
 	def boolean(self, p):
-		return arbre_abstrait.BooleanOperation(p[1],p[0],p[2])
+		return arbre_abstrait.ComparisonOperation(p[1],p[0],p[2])
 
 	@_('boolean ET boolean')
 	def boolean(self, p):
@@ -227,6 +239,23 @@ class FloParser(Parser):
 		return arbre_abstrait.BooleanOperation(p[0], p[1])
 
 
+
+	"""
+	@_('SI "(" expr ")" "{" listeInstructions "}" SINON SI "{" listeInstructions "}" SINON "{" listeInstructions "}"')
+	def instruction(self, p):
+		return arbre_abstrait.InstructionConditionnelle(p.expr, p.listeInstructions1, p.listeInstructions2, p.listeInstructions3)
+
+
+
+	
+
+	@_('ID "(" exprList ")" ";"')
+	def instruction(self, p):
+		return arbre_abstrait.AppelFonction(p.ID, p.exprList)
+
+	@_('ID "(" ")" ";"')
+	def instruction(self, p):
+		return arbre_abstrait.AppelFonction(p.ID, None)"""
 
 
 
