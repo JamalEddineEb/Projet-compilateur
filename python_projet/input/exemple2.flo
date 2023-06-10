@@ -1,1 +1,6 @@
-ecrire(-(7+3));
+si(1>0){
+    ecrire(17);
+}
+sinon{
+    ecrire(6);
+}

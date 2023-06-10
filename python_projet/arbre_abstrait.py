@@ -17,10 +17,11 @@ class lire:
 
 
 class Programme:
-    def __init__(self, listeInstructions):
+    def __init__(self, listeInstructions,listeFonctions=None):
         self.listeInstructions = listeInstructions
+        self.listeFonctions = listeFonctions
 
-    def afficher(self, indent=0):
+def afficher(self, indent=0):
         afficher("<programme>", indent)
         self.listeInstructions.afficher(indent + 1)
         afficher("</programme>", indent)
@@ -35,6 +36,17 @@ class ListeInstructions:
         for instruction in reversed(self.instructions):
             instruction.afficher(indent + 1)
         afficher("</listeInstructions>", indent)
+
+class ListeFonctions:
+    def __init__(self):
+        self.fonctions = []
+
+    def afficher(self, indent=0):
+        afficher("<listeFonctions>", indent)
+        for fonction in reversed(self.fonctions):
+            fonction.afficher(indent + 1)
+        afficher("</listeFonctions>", indent)
+
 
 class Affectation:
     def __init__(self, variable, expression):
@@ -188,16 +200,18 @@ class Boolean:
 
 
 class BooleanOperation:
-    def __init__(self, operator, operand1, operand2):
-        self.operator = operator
-        self.operand1 = operand1
-        self.operand2 = operand2
+    def __init__(self, operator, operand1, operand2=None):
+        self.op = operator
+        self.exp1 = operand1
+        self.exp2 = operand2
 
     def afficher(self, indent=0):
-        afficher("<BooleanOperation: \"" + self.operator + "\">", indent)
-        self.operand1.afficher(indent + 1)
-        self.operand2.afficher(indent + 1)
-        afficher("</BooleanOperation: \"" + self.operator + "\">", indent)
+        afficher("<BooleanOperation: \"" + self.op + "\">", indent)
+        self.exp1.afficher(indent + 1)
+        if(self.exp2):
+            self.exp2.afficher(indent + 1)
+        afficher("</BooleanOperation: \"" + self.op + "\">", indent)
+
 
 class InstructionBoucle:
     def __init__(self, condition, instructions):
@@ -211,7 +225,7 @@ class InstructionBoucle:
         afficher("</instruction_boucle>", indent)
 
 class Si:
-    def __init__(self, condition, instructions,sinon=None):
+    def __init__(self, condition, instructions, sinon=None):
         self.condition = condition
         self.instructions = instructions
         self.sinon = sinon
@@ -226,10 +240,10 @@ class Si:
 
 
 class SinonSi:
-    def __init__(self, condition, instructions,sinon=None):
-        self.sinon = sinon
+    def __init__(self, condition, instructions, sinon=None):
         self.condition = condition
         self.instructions = instructions
+        self.sinon = sinon
 
     def afficher(self, indent=0):
         afficher("<sinon_si>", indent)
@@ -248,4 +262,5 @@ class Sinon:
         afficher("<sinon>", indent)
         self.instructions.afficher(indent + 1)
         afficher("</sinon>", indent)
+
 

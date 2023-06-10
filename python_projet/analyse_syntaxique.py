@@ -13,6 +13,10 @@ class FloParser(Parser):
 	def prog(self, p):
 		return arbre_abstrait.Programme(p[0])
 
+	@_('listeFonctions listeInstructions')
+	def prog(self, p):
+		return arbre_abstrait.Programme(p[0],p[1])
+
 	@_('instruction')
 	def listeInstructions(self, p):
 		l = arbre_abstrait.ListeInstructions()
@@ -27,6 +31,18 @@ class FloParser(Parser):
 	@_('ecrire')
 	def instruction(self, p):
 		return p[0]
+
+	@_("fonction")
+	def listeFonctions(self, p):
+		f = arbre_abstrait.ListeFonctions()
+		f.fonctions.append(p.fonction)
+		return f
+
+	@_("fonction listeFonctions")
+	def listeFonctions(self, p):
+		p.listeFonctions.fonctions.append(p.fonction)
+		return p.listeFonctions
+
 
 	@_('appel_fonction')
 	def instruction(self, p):
@@ -200,36 +216,17 @@ class FloParser(Parser):
 
 	@_('boolean ET boolean')
 	def boolean(self, p):
-		return arbre_abstrait.Operation('ET', p[0], p[2])
+		return arbre_abstrait.BooleanOperation(p[1], p[0], p[2])
 
 	@_('boolean OU boolean')
 	def boolean(self, p):
-		return arbre_abstrait.Operation('OR', p[0], p[2])
+		return arbre_abstrait.BooleanOperation(p[1], p[0], p[2])
 
 	@_('NON boolean')
 	def boolean(self, p):
-		return arbre_abstrait.Operation('NOT', p[1])
+		return arbre_abstrait.BooleanOperation(p[0], p[1])
 
 
-	"""
-
-	
-
-	@_('SI "(" expr ")" "{" listeInstructions "}" SINON SI "{" listeInstructions "}" SINON "{" listeInstructions "}"')
-	def instruction(self, p):
-		return arbre_abstrait.InstructionConditionnelle(p.expr, p.listeInstructions1, p.listeInstructions2, p.listeInstructions3)
-
-
-
-	
-
-	@_('ID "(" exprList ")" ";"')
-	def instruction(self, p):
-		return arbre_abstrait.AppelFonction(p.ID, p.exprList)
-
-	@_('ID "(" ")" ";"')
-	def instruction(self, p):
-		return arbre_abstrait.AppelFonction(p.ID, None)"""
 
 
 

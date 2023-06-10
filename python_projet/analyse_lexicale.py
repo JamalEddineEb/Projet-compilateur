@@ -7,7 +7,7 @@ class FloLexer(Lexer):
 
 	# Noms des lexèmes (sauf les litéraux). En majuscule. Ordre non important
 	tokens = { ID, ENTIER, ECRIRE, INFERIEUR_OU_EGAL, EGALITE, DIFFERENT,CONDITION,OPERATEUR,
-           INFERIEUR, SUPERIEUR, SUPERIEUR_OU_EGAL, ET, OU, NON, BOOLEAN, TYPE
+			   INFERIEUR, SUPERIEUR, SUPERIEUR_OU_EGAL, ET, OU, NON, BOOLEAN, TYPE
 		, INSTRUCTION,INSTRUCTIONS,OPERATEUR_LOGIQUE,SI,SINON,TANTQUE,LIRE,T_ENTIER,RETOURNER,AFFECTATION,SINON_SI}
 
 	#Les caractères litéraux sont des caractères uniques qui sont retournés tel quel quand rencontré par l'analyse lexicale.
@@ -15,7 +15,7 @@ class FloLexer(Lexer):
 	#Donc, si une règle commence par un de ces littérals (comme INFERIEUR_OU_EGAL), cette règle aura la priorité.
 
 	literals = { '+','*','(',')',";", "-","/","%" ,",","{","}","="}
-	
+
 	# chaines contenant les caractère à ignorer. Ici espace et tabulation
 	ignore = ' \t'
 
@@ -29,19 +29,20 @@ class FloLexer(Lexer):
 	ID['Faux'] = BOOLEAN
 	ID['et'] = ET
 	ID['ou'] = OU
-	ID['!'] = NON
+	ID['Non'] = NON
 
 	ID['entier'] = TYPE
 	ID['boolean'] = TYPE
 
 	ID["="] = AFFECTATION
 
-	OPERATEUR = r'(?:<|>|==|!=|<=|>=)'
+
+	OPERATEUR = r'(?:<=|>=|==|!=|<|>)'
 
 
 
 
-#Opérateurs logiques
+	#Opérateurs logiques
 
 
 	# Expressions régulières pour les types et les identifiants
@@ -54,7 +55,7 @@ class FloLexer(Lexer):
 		t.value = (t.value.split()[0], t.value.split()[1])
 		return t
 
-    # Token pour l'affectation de variable
+	# Token pour l'affectation de variable
 	@_(ID + r'=' + ENTIER + r';')
 	def AFFECTATION(self, t):
 		t.value = (t.value.split()[0], " ".join(t.value.split()[2:-1]))
@@ -65,25 +66,10 @@ class FloLexer(Lexer):
 		t.value = int(t.value)
 		return t
 
-	@_("{ENTIER} {OPERATEUR} {ENTIER}")
-	def CONDITION(self, t):
-		op = t[1]
-		if op == "<":
-			t.value = t[0] < t[2]
-		elif op == ">":
-			t.value = t[0] > t[2]
-		elif op == "<=":
-			t.value = t[0] <= t[2]
-		elif op == ">=":
-			t.value = t[0] >= t[2]
-		elif op == "==":
-			t.value = t[0] == t[2]
-		elif op == "!=":
-			t.value = t[0] != t[2]
-		return t
 
 
-	
+
+
 	INSTRUCTIONS = r'instruction(\s*;\s*instruction)*\s*;?'
 	# The above regular expression matches one or more instructions separated by semicolons, with optional whitespace before and after
 
@@ -100,10 +86,7 @@ class FloLexer(Lexer):
 		name, value = t.value.split('=')
 		self.variables[name.strip()] = int(value.strip())
 
-	@_(r'boolean\s+' + str(ID) + r'\s*=\s*' + str(BOOLEAN))
-	def DECLARATION_AFFECTATION(self, t):
-		name, value = t.value.split('=')
-		self.variables[name.strip()] = (value.strip() == TRUE)
+
 
 
 
@@ -111,7 +94,7 @@ class FloLexer(Lexer):
 	#def lt(self, t):
 	#	return t
 
-    # Ajoutez des règles pour les autres opérations de comparaison, les opérations arithmétiques, les opérations logiques, etc.
+	# Ajoutez des règles pour les autres opérations de comparaison, les opérations arithmétiques, les opérations logiques, etc.
 
 	@_(r'si\s*\(' + str(CONDITION) + r'\)\s*{' + str(INSTRUCTIONS) + r'}\s*' + r'(sinon\s*{' + str(INSTRUCTIONS) + r'})?\s*')
 	def if_statement(self, t):
@@ -128,7 +111,7 @@ class FloLexer(Lexer):
 	# cas spéciaux:
 	ID['ecrire'] = ECRIRE
 	ID['lire'] = LIRE
-	
+
 	#Syntaxe des commentaires à ignorer
 	ignore_comment = r'\#.*'
 
@@ -138,15 +121,15 @@ class FloLexer(Lexer):
 		self.lineno += t.value.count('\n')
 
 
-		
-     
+
+
 
 	# En cas d'erreur, indique où elle se trouve
 	def error(self, t):
 		print(f'Ligne{self.lineno}: caractère inattendu "{t.value[0]}"')
 		self.index += 1
-  
-	
+
+
 
 if __name__ == '__main__':
 	if len(sys.argv) < 2:
