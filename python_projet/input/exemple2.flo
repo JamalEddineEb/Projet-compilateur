@@ -1,5 +1,14 @@
 entier neyy(entier c,boolean b){
-    ecrire(42);
+    entier res = 0;
+ 	si (entier1 >= entier2 et entier1 > entier3 ){
+ 		res = entier1;
+ 	}
+ 	sinon si ( Vrai  ){
+    		res = entier2;
+    	}
+ 	sinon {
+    		res = entier2;
+    	}
 }
 entier myy(){
     ecrire(4);

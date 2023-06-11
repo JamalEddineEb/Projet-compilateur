@@ -47,7 +47,7 @@ class FloParser(Parser):
 
 	@_("")
 	def listeParametres(self, p):
-		return None
+		return []
 
 
 
@@ -98,25 +98,25 @@ class FloParser(Parser):
 	def instruction(self,p):
 		return p[0]
 
-	@_('SI "(" expr ")" "{" listeInstructions "}" sinon')
+	@_('SI "(" boolean ")" "{" listeInstructions "}" sinon')
 	def si(self, p):
-		return arbre_abstrait.Si(p.expr, p.listeInstructions,p.sinon)
+		return arbre_abstrait.Si(p.boolean, p.listeInstructions,p.sinon)
 
 	@_('')
 	def sinon(self,p):
 		return None
 
-	@_('SINON SI "(" expr ")" "{" listeInstructions "}" sinon')
+	@_('SINON SI "(" boolean ")" "{" listeInstructions "}" sinon')
 	def sinon(self,p):
-		return arbre_abstrait.SinonSi(p.expr,p.listeInstructions,p.sinon)
+		return arbre_abstrait.SinonSi(p.boolean,p.listeInstructions,p.sinon)
 
 	@_('SINON "{" listeInstructions "}"')
 	def sinon(self,p):
 		return arbre_abstrait.Sinon(p.listeInstructions)
 
-	@_('TANTQUE "(" expr ")" "{" listeInstructions "}"')
+	@_('TANTQUE "(" boolean ")" "{" listeInstructions "}"')
 	def tant_que(self, p):
-		return arbre_abstrait.InstructionBoucle(p.expr, p.listeInstructions)
+		return arbre_abstrait.InstructionBoucle(p.boolean, p.listeInstructions)
 
 	@_('RETOURNER expr ";"')
 	def retourner(self,p):

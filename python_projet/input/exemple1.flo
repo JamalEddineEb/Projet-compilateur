@@ -1,21 +1,3 @@
-entier a;
-ecrire(42);
-a =3;
-boolean b = 4;
-tantque(a>3){
-    ecrire(42);
-    ecrire(a);
-    retourner 12;
+entier ney(entier a){
+    ecrire(1);
 }
-no(4,2,3);
-
-si(b){
-    ecrire(42);
-}
-sinon si(3>2){
-    f(3);
-}
-sinon{
-    a=2;
-}
-
