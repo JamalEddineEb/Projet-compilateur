@@ -1,5 +1,9 @@
+entier meyy(entier b){
+    ecrire(4);
+}
 entier neyy(entier c,boolean b){
     entier res = 0;
+    entier b;
  	si (entier1 >= entier2 et entier1 > entier3 ){
  		res = entier1;
  	}

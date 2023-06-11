@@ -1,0 +1,5 @@
+entier neyy(){
+    retourner 4;
+}
+ecrire(ney(4));
+ney();

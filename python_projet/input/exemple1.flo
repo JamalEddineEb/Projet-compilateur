@@ -1,3 +1,11 @@
-entier ney(entier a){
-    ecrire(1);
+entier res = 0;
+entier b;
+si (entier1 >= entier2 et entier1 > entier3 ){
+    res = entier1;
 }
+sinon si ( Vrai  ){
+        res = entier2;
+    }
+sinon {
+        res = entier2;
+    }

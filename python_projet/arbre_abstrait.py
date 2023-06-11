@@ -49,12 +49,13 @@ class Fonction:
         afficher("<fonction>", indent)
         afficher("[Type retour: "+self.type_retour+"]", indent + 1)
         afficher("[Identificateur: "+self.identificateur+"]", indent + 1)
-        if(self.liste_parametres):
+        if(self.liste_parametres!=[]):
             afficher("<liste_parametres>", indent+1)
             for p in self.liste_parametres:
                 p.afficher(indent+2)
             afficher("</liste_parametres>", indent + 1)
-        self.liste_instructions.afficher(indent+1)
+        if(self.liste_instructions!=[]):
+            self.liste_instructions.afficher(indent+1)
         afficher("</fonction>", indent)
 
 class Parametre:
@@ -99,8 +100,8 @@ class Declaration:
 
     def afficher(self, indent=0):
         afficher("<declaration>", indent)
-        self.type_.afficher(indent + 1)
-        self.identifiant.afficher(indent + 1)
+        afficher("[Type : "+self.type_+"]",indent+1)
+        afficher("[Nom : "+self.identifiant+"]",indent+1)
         afficher("</declaration>", indent)
 
 class DeclarationAffectation:
@@ -111,8 +112,8 @@ class DeclarationAffectation:
 
     def afficher(self, indent=0):
         afficher("<declaration_affectation>", indent)
-        self.type_.afficher(indent + 1)
-        self.identifiant.afficher(indent + 1)
+        afficher("[Type : "+self.type_+"]",indent + 1)
+        afficher("[Nom : "+self.identifiant+"]",indent + 1)
         self.expression.afficher(indent + 1)
         afficher("</declaration_affectation>", indent)
 
@@ -204,13 +205,14 @@ class Type:
 
 
 class AppelFonction:
-    def __init__(self, nom, arguments):
+    def __init__(self, nom, arguments=None):
         self.nom = nom
         self.arguments = arguments
 
     def afficher(self, indent=0):
         afficher("<Appel fonction:" + str(self.nom) + ">", indent)
-        self.arguments.afficher(indent + 1)
+        if(self.arguments):
+            self.arguments.afficher(indent + 1)
         afficher("</Appel fonction:" + str(self.nom) + ">", indent)
 
 

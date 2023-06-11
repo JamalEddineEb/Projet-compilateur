@@ -4,9 +4,9 @@ from analyse_syntaxique import FloParser
 import arbre_abstrait
 
 num_etiquette_courante = -1 #Permet de donner des noms différents à toutes les étiquettes (en les appelant e0, e1,e2,...)
-
 afficher_table = False
 afficher_nasm = False
+
 """
 Un print qui ne fonctionne que si la variable afficher_table vaut Vrai.
 (permet de choisir si on affiche le code assembleur ou la table des symboles)
@@ -62,10 +62,39 @@ def gen_programme(programme):
 	printifm('v$a:	resd	1')
 	printifm('section\t.text')
 	printifm('global _start')
+	ajouter_les_fonctions(programme.listeFonctions)
+	gen_listeFonctions(programme.listeFonctions)
 	printifm('_start:')
 	gen_listeInstructions(programme.listeInstructions)
 	nasm_instruction("mov", "eax", "1", "", "1 est le code de SYS_EXIT")
 	nasm_instruction("int", "0x80", "", "", "exit")
+
+class TableDesSymboles:
+	def __init__(self):
+		self.symboles = {}
+		self.fonction_actuelle = 0
+		self.fonction_type = 0
+
+	def ajouterFonction(self, nom, type):
+		self.symboles[nom] = type
+
+	def dansLaFonction(self,nom):
+		if(self.verifierExistenceFonction(nom)):
+			self.fonction_actuelle = nom
+			self.fonction_type = self.symboles.get(nom)
+		else:
+			self.fonction_actuelle = 0
+
+	def verifierExistenceFonction(self, nom):
+		return nom in self.symboles
+table_des_symboles = TableDesSymboles()
+
+
+
+def ajouter_les_fonctions(listeFonctions):
+	for fonction in listeFonctions.fonctions:
+		table_des_symboles.ajouterFonction(fonction.identificateur,fonction.type_retour)
+
 
 """
 Affiche le code nasm correspondant à une suite d'instructions
@@ -74,6 +103,9 @@ def gen_listeInstructions(listeInstructions):
 	for instruction in listeInstructions.instructions:
 		gen_instruction(instruction)
 
+def gen_listeFonctions(listeFonctions):
+	for fonction in listeFonctions.fonctions:
+		gen_def_fonction(fonction)
 """
 Affiche le code nasm correspondant à une instruction
 """
@@ -84,6 +116,17 @@ def gen_instruction(instruction):
 		gen_loop(instruction.condition,instruction.instructions)
 	elif type(instruction) == arbre_abstrait.Si:
 		gen_si(instruction)
+	elif type(instruction) == arbre_abstrait.InstructionRetour and table_des_symboles.fonction_actuelle!=0:
+		if ((type(instruction.expression) == arbre_abstrait.Entier and table_des_symboles.fonction_type == "entier")
+				or ((type(instruction.expression) == arbre_abstrait.Boolean or type(instruction.expression) == arbre_abstrait.BooleanOperation)
+					and table_des_symboles.fonction_type == "boolean")):
+			gen_expression(instruction.expression)
+			nasm_instruction("pop","eax","","","récupere la valeur pour le retour de la fonction")
+			nasm_instruction("ret","","","","Retourner la valeur")
+		else:
+			print("type instruction inconnu",type(instruction))
+			exit(0)
+
 	else:
 		print("type instruction inconnu",type(instruction))
 		exit(0)
@@ -121,10 +164,29 @@ def gen_expression(expression):
 		return "boolean"
 	elif type(expression) == arbre_abstrait.ComparisonOperation:
 		gen_comparison(expression)
-
+	elif type(expression) == arbre_abstrait.AppelFonction:
+		nasm_instruction("call",f"_{expression.nom}")
+		nasm_instruction("push", "eax", "", "", "Empile la valeur lue")
 	else:
 		print("type d'expression inconnu",type(expression))
 		exit(0)
+
+def gen_def_fonction(f):
+	table_des_symboles.dansLaFonction(f.identificateur)
+	print(f"_{f.identificateur}:")
+	gen_listeInstructions(f.liste_instructions)
+	table_des_symboles.dansLaFonction(0)
+
+def gen_appel_fonction(appel):
+	if type(appel) == int:
+		nasm_instruction("push", str(appel), "", "", "Empiler l'argument de la fonction")
+	else:
+		nasm_instruction("call", "_" + appel, "", "", "Appel de la fonction")
+		if table_des_symboles.verifierExistenceFonction(appel):
+			nasm_instruction("push", "eax", "", "", "Empiler la valeur de retour")
+
+# Le reste de votre code...
+
 
 """
 Affiche le code nasm pour calculer l'opération de comparaison et la mettre en haut de la pile

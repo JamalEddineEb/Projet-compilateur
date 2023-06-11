@@ -63,6 +63,8 @@ class FloParser(Parser):
 		p[1].instructions.append(p[0])
 		return p[1]
 
+
+
 	@_('ecrire')
 	def instruction(self, p):
 		return p[0]
@@ -79,6 +81,10 @@ class FloParser(Parser):
 	def instruction(self,p):
 		return p[0]
 
+	@_('variable "=" expr ";"')
+	def affectation(self, p):
+		return arbre_abstrait.Affectation(p[0], p[2])
+
 	@_('declaration_affectation')
 	def instruction(self,p):
 		return p[0]
@@ -94,6 +100,10 @@ class FloParser(Parser):
 	@_('ID "(" exprList ")" ";"')
 	def appel_fonction(self, p):
 		return arbre_abstrait.AppelFonction(p[0], p[2])
+
+	@_('ID "("  ")" ";"')
+	def appel_fonction(self, p):
+		return arbre_abstrait.AppelFonction(p[0])
 	@_('si')
 	def instruction(self,p):
 		return p[0]
@@ -122,15 +132,12 @@ class FloParser(Parser):
 	def retourner(self,p):
 		return arbre_abstrait.InstructionRetour(p[1])
 
-	@_('type variable "=" expr ";"')
+	@_('TYPE ID "=" expr ";"')
 	def declaration_affectation(self, p):
 		return arbre_abstrait.DeclarationAffectation(p[0], p[1], p[3])
 
-	@_('variable "=" expr ";"')
-	def affectation(self, p):
-		return arbre_abstrait.Affectation(p[0], p[2])
 
-	@_('type id ";"')
+	@_('TYPE ID ";"')
 	def declaration(self, p):
 		return arbre_abstrait.Declaration(p[0], p[1])
 
